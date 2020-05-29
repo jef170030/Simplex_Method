@@ -1,7 +1,13 @@
 import numpy as np
+from enum import Enum
 
 
 class LinearProgram:
+    class StepStatus(Enum):
+        STEP_MADE=0
+        OPTIMAL_FOUND=1
+        UNBOUNDED=2
+
     def __init__(self, c, A, b):
         self.c = c
         self.A = A
@@ -14,60 +20,44 @@ class LinearProgram:
         N = self.A[:, indN]
         cB = self.c[indB]
         cN = self.c[indN]
-        print(B)
-        print(N)
-        print(cB)
-        print(cN)
+        xB = x[indB]
 
         l = np.linalg.solve(np.transpose(B), cB)  # Find lambda as lambda = B^(-T)c_B
-        print(l)
 
         sN = cN - np.matmul(np.transpose(N), l)
-        print(sN)
-        q = np.argmin(sN)  # naive selection of q
-        print(q)
-        if sN[q] >= 0:
-            print("We are done")
-            return None
-            # TODO:implement stop on all components of sN>=0 - i.e. we are optimal
+        qN = np.argmin(sN)  # naive selection of q
+        q=indN[qN]
+        if sN[qN] >= 0:
+            return self.StepStatus.OPTIMAL_FOUND, x, indB, indN
 
-        print(A[:, q])
-        d = np.linalg.solve(B, A[:, q])
-        print(d)
+        d = np.linalg.solve(B, self.A[:, q])
 
-        if all(i <= 0 for i in d):
-            print("Problem is unbounded")
-            return None
+        if all(di <= 0 for di in d):
+            return self.StepStatus.UNBOUNDED, None, None, None
 
-        xB = np.linalg.solve(B, b)
-
-        v = []
-        for i in range(0, len(d)):
+        v=np.zeros_like(d)
+        for i in range(len(d)):
             if d[i] > 0:
-                v = v.append(np.divide(xB[i], d[i]))
+                v[i]=xB[i]/d[i]
+            else:
+                v[i]=np.Inf
+        pB=np.argmin(v)
+        p=indB[pB]
+        xqplus=v[pB]
 
-        print(v)
-        p = min(v)
+        xBplus=xB-np.multiply(xqplus,d)
+        xNplus=np.zeros(len(indN))
+        xNplus[qN]=xqplus
 
-        xqnew = np.divide(xB[p], d[p])
-        xBnew = xB - np.matmul(d, xqnew)
+        xplus=np.zeros_like(x)
+        xplus[indB]=xBplus
+        xplus[indN]=xNplus
 
-        Bnew = B.union(q)
-        Nnew = 0
-        return xBnew, Bnew, Nnew
+        indBplus=indB[:]
+        indNplus=indN[:]
+        indBplus.append(q)
+        indNplus.append(p)
 
-
-# (x,y,z) s.t. 1*x+2*y+ 1*z=1 has vertices (1,0,0),(0,1/2,0),(0,0,1)
-
-
-A = np.array([[1, 2, 1],
-              [0, 0, 1]])
-b = [1, 0.5]
-c = np.array([1, 0.05, 0.1])
-
-x0 = [0.5, 0, 0.5]
-indB0 = [0, 2]
-indN0 = [1]
-
-lp1 = LinearProgram(c, A, b)
-lp1.SimplexStep(x0, indB0, indN0)
+        indBplus.pop(pB)
+        indNplus.pop(qN)
+        return self.StepStatus.STEP_MADE,xplus,indBplus,indNplus

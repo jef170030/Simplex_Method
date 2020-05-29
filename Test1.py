@@ -20,6 +20,15 @@ A=np.array([[1,  2, 3,-1,-2],
             [4,  5, 6,-3,4],
             [7,  8, 9,-5,-6],
             [10,11,12,-7,-8]])
+
+
+def functoin_arg_test(mylist):
+    mylistlocal=mylist[:]
+    mylistlocal.append(-1)
+    return mylistlocal
+
 ind=[0,4,1]
-print(A[:,ind])
+ind2=functoin_arg_test(ind)
+print(ind)
+
 
