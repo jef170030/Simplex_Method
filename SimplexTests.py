@@ -35,8 +35,26 @@ class SimplexTests(unittest.TestCase):
 
 
     def test_example2(self):
-        self.assertTrue(True)
+        self.assertTrue(True) # this was here from last meeting
+
+        A = np.array([[1, 0, 1],
+                      [0, 1, 0]])
+        b = [1, 0.5]
+        c = np.array([1, -0.5, 0.5])
+
+        x0 = np.array([1, 0.5, 0])
+        indB0 = [0, 1]
+        indN0 = [2]
+
+        lp2 = LinearProgram(c, A, b)
+        (status, x1, indB1, indN1) = lp2.SimplexStep(x0, indB0, indN0)
+        print(status)
+        print(x1)
+        print(indB1)
+        print(indN1)
 
 
+        self.assertEqual(status, expected_status2)
+        self.assertTrue(np.array_equal(x1, expected_x2))
 
-unittest.main()
+        unittest.main()
