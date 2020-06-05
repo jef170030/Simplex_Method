@@ -7,14 +7,15 @@ class SimplexTests(unittest.TestCase):
     def test_example1(self):
         A = np.array([[1, 2, 1],
                       [0, 0, 1]])
-        b = [1, 0.5]
+        b = np.array([1, 0.5])
         c = np.array([1, 0.05, 0.1])
+
+        lp1 = LinearProgram(c, A, b)
 
         x0 = np.array([0.5, 0, 0.5])
         indB0 = [0, 2]
         indN0 = [1]
 
-        lp1 = LinearProgram(c, A, b)
         (status, x1, indB1, indN1) = lp1.SimplexStep(x0, indB0, indN0)
         #print(status)
         #print(x1)
@@ -33,8 +34,13 @@ class SimplexTests(unittest.TestCase):
         expected_status2 = LinearProgram.StepStatus.OPTIMAL_FOUND
         self.assertEqual(status,expected_status2)
 
+        (status, x)=lp1.solve()
+        self.assertTrue(np.array_equal(x,x2))
+        self.assertEqual(status, LinearProgram.ProblemStatus.OPTIMAL_FOUND)
 
-    def test_example2(self):
+
+
+    def test_unbounded1(self):
 
         A = np.array([[1, 0, 0],
                       [0, 1, 0]])
@@ -54,6 +60,28 @@ class SimplexTests(unittest.TestCase):
 
         expected_status=LinearProgram.StepStatus.UNBOUNDED
         self.assertEqual(status, expected_status)
+
+    def test_auxproblem1(self):
+        A=np.array([[1, 2]])
+        b=np.array([1])
+        c=np.array([1, 0.1])
+        lp=LinearProgram(c,A,b)
+        (lpaux,(x0aux,indBaux,indNaux))=lp.getAuxilaryPrioblem()
+
+        (status, x, indB, indN) = lpaux.runSteps(x0aux,indBaux,indNaux)
+        print(x)
+        print(indB)
+        print(indN)
+        #Provided that the auxilary problem is non-degenerate, we must have indB as a subset of 1..n
+        indNorig = [0]
+        xorig=x[0: lp.n]
+        print(xorig)
+        (status, xorig, indBorig, indNorig) = lp.runSteps(xorig, indB, indNorig)
+        print(xorig)
+        print(status)
+
+
+
 
 
 unittest.main()
