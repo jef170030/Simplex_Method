@@ -16,10 +16,10 @@ class SimplexTests(unittest.TestCase):
 
         lp1 = LinearProgram(c, A, b)
         (status, x1, indB1, indN1) = lp1.SimplexStep(x0, indB0, indN0)
-        print(status)
-        print(x1)
-        print(indB1)
-        print(indN1)
+        #print(status)
+        #print(x1)
+        #print(indB1)
+        #print(indN1)
 
         expected_status1=LinearProgram.StepStatus.STEP_MADE
         expected_x1=np.array([0,0.25,0.5])
@@ -29,18 +29,17 @@ class SimplexTests(unittest.TestCase):
 
         (status, x2, indB2, indN2) = lp1.SimplexStep(x1, indB1, indN1)
 
-        print(status)
+        #print(status)
         expected_status2 = LinearProgram.StepStatus.OPTIMAL_FOUND
         self.assertEqual(status,expected_status2)
 
 
     def test_example2(self):
-        self.assertTrue(True) # this was here from last meeting
 
-        A = np.array([[1, 0, 1],
+        A = np.array([[1, 0, 0],
                       [0, 1, 0]])
         b = [1, 0.5]
-        c = np.array([1, -0.5, 0.5])
+        c = np.array([1, -0.5, -0.5])
 
         x0 = np.array([1, 0.5, 0])
         indB0 = [0, 1]
@@ -48,13 +47,13 @@ class SimplexTests(unittest.TestCase):
 
         lp2 = LinearProgram(c, A, b)
         (status, x1, indB1, indN1) = lp2.SimplexStep(x0, indB0, indN0)
-        print(status)
-        print(x1)
-        print(indB1)
-        print(indN1)
+        #print(status)
+        #print(x1)
+        #print(indB1)
+        #print(indN1)
+
+        expected_status=LinearProgram.StepStatus.UNBOUNDED
+        self.assertEqual(status, expected_status)
 
 
-        self.assertEqual(status, expected_status2)
-        self.assertTrue(np.array_equal(x1, expected_x2))
-
-        unittest.main()
+unittest.main()
