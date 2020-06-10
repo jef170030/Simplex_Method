@@ -4,9 +4,9 @@ from enum import Enum
 
 class LinearProgram:
     class StepStatus(Enum):
-        STEP_MADE=0
-        OPTIMAL_FOUND=1
-        UNBOUNDED=2
+        STEP_MADE = 0
+        OPTIMAL_FOUND = 1
+        UNBOUNDED = 2
 
     class ProblemStatus(Enum):
         OPTIMAL_FOUND = 0
@@ -20,18 +20,16 @@ class LinearProgram:
         self.m = A.shape[0]
         self.n = A.shape[1]
 
-    def getAuxilaryPrioblem(self):
-        sign=np.where(self.b>=0, 1,-1)
-        E=np.diag(sign)
-        Aaux=np.concatenate((self.A,E),axis=1)
-        caux=np.concatenate((np.zeros_like(self.c),np.ones_like(self.b)))
+    def getAuxiliaryProblem(self):
+        sign = np.where(self.b >= 0, 1, -1)
+        E = np.diag(sign)
+        Aaux = np.concatenate((self.A, E), axis=1)
+        caux = np.concatenate((np.zeros_like(self.c), np.ones_like(self.b)))
 
-        x0aux=np.concatenate((np.zeros_like(self.c),np.absolute(self.b)))
-        indBaux=list(range(self.n, self.n+self.m))
-        indNaux=list(range(0, self.n))
-        return LinearProgram(caux,Aaux,self.b[:]), (x0aux,indBaux,indNaux)
-
-
+        x0aux = np.concatenate((np.zeros_like(self.c), np.absolute(self.b)))
+        indBaux = list(range(self.n, self.n + self.m))
+        indNaux = list(range(0, self.n))
+        return LinearProgram(caux, Aaux, self.b[:]), (x0aux, indBaux, indNaux)
 
     def SimplexStep(self, x, indB, indN):
         B = self.A[:, indB]
@@ -44,7 +42,7 @@ class LinearProgram:
 
         sN = cN - np.matmul(np.transpose(N), l)
         qN = np.argmin(sN)  # naive selection of q
-        q=indN[qN]
+        q = indN[qN]
         if sN[qN] >= 0:
             return self.StepStatus.OPTIMAL_FOUND, x, indB, indN
 
@@ -53,55 +51,55 @@ class LinearProgram:
         if all(di <= 0 for di in d):
             return self.StepStatus.UNBOUNDED, None, None, None
 
-        v=np.zeros_like(d)
+        v = np.zeros_like(d)
         for i in range(len(d)):
             if d[i] > 0:
-                v[i]=xB[i]/d[i]
+                v[i] = xB[i] / d[i]
             else:
-                v[i]=np.Inf
-        pB=np.argmin(v)
-        p=indB[pB]
-        xqplus=v[pB]
+                v[i] = np.Inf
+        pB = np.argmin(v)
+        p = indB[pB]
+        xqplus = v[pB]
 
-        xBplus=xB-np.multiply(xqplus,d)
-        xNplus=np.zeros(len(indN))
-        xNplus[qN]=xqplus
+        xBplus = xB - np.multiply(xqplus, d)
+        xNplus = np.zeros(len(indN))
+        xNplus[qN] = xqplus
 
-        xplus=np.zeros_like(x)
-        xplus[indB]=xBplus
-        xplus[indN]=xNplus
+        xplus = np.zeros_like(x)
+        xplus[indB] = xBplus
+        xplus[indN] = xNplus
 
-        indBplus=indB[:]
-        indNplus=indN[:]
+        indBplus = indB[:]
+        indNplus = indN[:]
         indBplus.append(q)
         indNplus.append(p)
 
         indBplus.pop(pB)
         indNplus.pop(qN)
-        return self.StepStatus.STEP_MADE,xplus,indBplus,indNplus
+        return self.StepStatus.STEP_MADE, xplus, indBplus, indNplus
 
-    def runSteps(self,  x, indB, indN):
-        status=self.StepStatus.STEP_MADE
-        i=0
+    def runSteps(self, x, indB, indN):
+        status = self.StepStatus.STEP_MADE
+        i = 0
         while status == self.StepStatus.STEP_MADE:
             (status, x, indB, indN) = self.SimplexStep(x, indB, indN)
-            i=i+1
+            i = i + 1
         return (status, x, indB, indN)
 
     def solve(self):
-        (lpaux, (x0aux, indBaux, indNaux)) = self.getAuxilaryPrioblem()
+        (lpaux, (x0aux, indBaux, indNaux)) = self.getAuxiliaryProblem()
         (statusaux, xaux, indBaux, indNaux) = lpaux.runSteps(x0aux, indBaux, indNaux)
 
-        if np.dot(lpaux.c, xaux)>1e-9:
+        if np.dot(lpaux.c, xaux) > 1e-9:
             return self.ProblemStatus.UNFEASIBLE, None
         # Provided that the auxilary problem is non-degenerate, we must have indB as a subset of 1..n
         # TODO: check if all elements of indB are less then n
         # TODO: implement the case of degenerate problem
 
         x = np.array(xaux[0: self.n])
-        indB=indBaux
-        indN=[]
-        for i in range(0,self.n):
+        indB = indBaux
+        indN = []
+        for i in range(0, self.n):
             if not (i in indB):
                 indN.append(i)
         (status, x, indB, indN) = self.runSteps(x, indB, indN)
@@ -110,14 +108,3 @@ class LinearProgram:
             return self.ProblemStatus.UNBOUNDED, None
         else:
             return self.ProblemStatus.OPTIMAL_FOUND, x
-
-
-
-
-
-
-
-
-
-
-

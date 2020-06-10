@@ -15,30 +15,30 @@ x=Test(A)
 #print(np.dot(x,b))
 #print(np.matmul(x,A))
 
-C=np.array([[2,1],[1,2],[9,9]])
+C = np.array([[2,1],[1,2],[9,9]])
 print(C.shape[0])
 
-A=np.array([[1,  2, 3,-1,-2],
+A = np.array([[1,  2, 3,-1,-2],
             [4,  5, 6,-3,4],
             [7,  8, 9,-5,-6],
             [10,11,12,-7,-8]])
 
 
-def functoin_arg_test(mylist):
-    mylistlocal=mylist[:]
+def function_arg_test(mylist):
+    mylistlocal = mylist[:]
     mylistlocal.append(-1)
     return mylistlocal
 
-ind=[0,4,1]
-ind2=functoin_arg_test(ind)
+ind = [0,4,1]
+ind2 = function_arg_test(ind)
 print(ind)
 
 
-u=np.array([1,2,3,4])
-v=np.diag(u)
+u = np.array([1,2,3,4])
+v = np.diag(u)
 print(v)
 
-u=np.array([-2,0,10])
+u = np.array([-2,0,10])
 print(np.sign(u))
 
 A = np.array([[1, 2, 1],
@@ -50,12 +50,10 @@ c = np.array([1, 0.05, 0.1])
 lp1 = LinearProgram(c, A, b)
 print(np.diag([1]))
 
-n=5
-m=3
+n = 5
+m = 3
 
 indBaux = list(range(n, n + m))
 indNaux = list(range(0, n))
 print(indBaux)
 print(indNaux)
-
-
