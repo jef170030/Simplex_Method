@@ -57,3 +57,6 @@ indBaux = list(range(n, n + m))
 indNaux = list(range(0, n))
 print(indBaux)
 print(indNaux)
+
+print(np.Inf<=0)
+print(np.NINF>=0)

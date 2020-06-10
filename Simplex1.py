@@ -102,6 +102,7 @@ class LinearProgram:
         for i in range(0, self.n):
             if not (i in indB):
                 indN.append(i)
+
         (status, x, indB, indN) = self.runSteps(x, indB, indN)
 
         if status == self.StepStatus.UNBOUNDED:
