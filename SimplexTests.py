@@ -71,7 +71,7 @@ class SimplexTests(unittest.TestCase):
         print(x)
         print(indB)
         print(indN)
-        # Provided that the auxilary problem is non-degenerate, we must have indB as a subset of 1..n
+        # Provided that the auxiliary problem is non-degenerate, we must have indB as a subset of 1..n
         indNorig = [0]
         xorig = x[0: lp.n]
         print(xorig)
@@ -80,5 +80,5 @@ class SimplexTests(unittest.TestCase):
         print(status)
 
 
-if __name__ == '__main__':
-    unittest.main()
+#if __name__ == '__main__':
+#   unittest.main()

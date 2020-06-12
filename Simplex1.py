@@ -24,7 +24,7 @@ class LinearProgram:
         sign = np.where(self.b >= 0, 1, -1)
         E = np.diag(sign)
         Aaux = np.concatenate((self.A, E), axis=1)
-        caux = np.concatenate((np.zeros_like(self.c), np.ones_like(self.b)))
+        caux = np.concatenate((np.zeros_like(self.c), np.ones_like(self.b)))  # Cost auxiliary function
 
         x0aux = np.concatenate((np.zeros_like(self.c), np.absolute(self.b)))
         indBaux = list(range(self.n, self.n + self.m))
@@ -42,7 +42,7 @@ class LinearProgram:
 
         sN = cN - np.matmul(np.transpose(N), l)
         qN = np.argmin(sN)  # naive selection of q
-        q = indN[qN]
+        q = indN[qN]  # where the minimizing argument qN of sN sits inside of N as an index
         if sN[qN] >= 0:
             return self.StepStatus.OPTIMAL_FOUND, x, indB, indN
 
@@ -58,7 +58,7 @@ class LinearProgram:
             else:
                 v[i] = np.Inf
         pB = np.argmin(v)
-        p = indB[pB]
+        p = indB[pB]  # Index of minimizer for v vector in B
         xqplus = v[pB]
 
         xBplus = xB - np.multiply(xqplus, d)
@@ -84,7 +84,7 @@ class LinearProgram:
         while status == self.StepStatus.STEP_MADE:
             (status, x, indB, indN) = self.SimplexStep(x, indB, indN)
             i = i + 1
-        return (status, x, indB, indN)
+        return status, x, indB, indN
 
     def solve(self):
         (lpaux, (x0aux, indBaux, indNaux)) = self.getAuxiliaryProblem()
@@ -92,7 +92,7 @@ class LinearProgram:
 
         if np.dot(lpaux.c, xaux) > 1e-9:
             return self.ProblemStatus.UNFEASIBLE, None
-        # Provided that the auxilary problem is non-degenerate, we must have indB as a subset of 1..n
+        # Provided that the auxiliary problem is non-degenerate, we must have indB as a subset of 1...n
         # TODO: check if all elements of indB are less then n
         # TODO: implement the case of degenerate problem
 

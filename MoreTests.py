@@ -27,3 +27,20 @@ lp10 = LinearProgram(c, A, b)
 print("10D problem:")
 print(status)
 print(x)
+
+
+"""Network test
+A = np.array([[1, 0, 1, 0, 0, -1],
+              [-1, 1, 0, 1, 0, 0],
+              [0, 0, -1, -1, 1, 0],
+              [0, -1, 0, 0, -1, 1]])
+b = np.array([0, 0, 0, 0])
+c = np.array([0, 0, 0, 0, 0, -1])
+
+NetTest = LinearProgram(c, A, b)
+
+(status, x) = NetTest.solve()
+print(status)
+print(x)
+"""
+
