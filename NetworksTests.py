@@ -1,6 +1,5 @@
 import numpy as np
 from Networks import Network
-from Simplex1 import LinearProgram
 
 Q = np.array([[1, 0, 1, 0, 0, -1],
               [-1, 1, 0, 1, 0, 0],
@@ -17,3 +16,5 @@ l = np.array([0, 0, 0, 0])
 (status, x) = Net1.getLinearProgram(w, l)
 print(status)
 print(x)
+
+
