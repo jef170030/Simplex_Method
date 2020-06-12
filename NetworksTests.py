@@ -13,8 +13,12 @@ Net1 = Network(Q, cmin, cmax)
 w = np.array([0, 0, 0, 0, 0, -1])
 l = np.array([0, 0, 0, 0])
 
-(status, x) = Net1.getLinearProgram(w, l)
-print(status)
-print(x)
+net1lp = Net1.getLinearProgram(w, l)
+(lpaux, (x0aux, indBaux, indNaux)) = net1lp.getAuxiliaryProblem()
+(statusaux, xaux, indBaux, indNaux) = lpaux.runSteps(x0aux, indBaux, indNaux)
+
+#(status,x) = net1lp.solve()
+print(statusaux)
+print(xaux)
 
 

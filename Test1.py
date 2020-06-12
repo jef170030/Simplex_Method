@@ -60,3 +60,6 @@ print(indNaux)
 
 print(np.Inf<=0)
 print(np.NINF>=0)
+
+print(np.zeros(6))
+print(np.zeros((3,3)))
