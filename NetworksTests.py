@@ -17,8 +17,6 @@ net1lp = Net1.getLinearProgram(w, l)
 (lpaux, (x0aux, indBaux, indNaux)) = net1lp.getAuxiliaryProblem()
 (statusaux, xaux, indBaux, indNaux) = lpaux.runSteps(x0aux, indBaux, indNaux)
 
-#(status,x) = net1lp.solve()
+# (status,x) = net1lp.solve()
 print(statusaux)
 print(xaux)
-
-
