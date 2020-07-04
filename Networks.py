@@ -19,3 +19,7 @@ class Network:
         ])
         b = np.concatenate((self.cmax, -self.cmin, l))
         return LinearProgram(c, A, b)
+
+    def lp_point_to_flow(self, x_lp):
+        return x_lp[range(self.n)] - x_lp[range(self.n, 2*self.n)]
+

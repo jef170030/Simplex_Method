@@ -3,6 +3,7 @@ from enum import Enum
 
 
 class LinearProgram:
+    eps= 1e-10
     class StepStatus(Enum):
         STEP_MADE = 0
         OPTIMAL_FOUND = 1
@@ -86,22 +87,35 @@ class LinearProgram:
             i = i + 1
         return status, x, indB, indN
 
+    def phase_one_to_phase_two(self, xaux, indBaux):
+        indB = []
+        for i in range(len(indBaux)):
+            if indBaux[i] < self.n:
+                indB.append(indBaux[i])
+
+        x = np.array(xaux[0: self.n])
+        add_indices_amount = self.m -len(indB)
+
+        #naive solution
+        #TODO:account for a degenerate phase-2 problem
+        i=0
+        while add_indices_amount > 0:
+            if (abs(x[i]) < self.eps) and (i not in indB):
+                indB.append(i)
+                add_indices_amount=add_indices_amount-1
+            i=i+1
+
+        indN = list(set(range(self.n)) - set(indB))
+        return x, indB, indN
+
     def solve(self):
         (lpaux, (x0aux, indBaux, indNaux)) = self.getAuxiliaryProblem()
         (statusaux, xaux, indBaux, indNaux) = lpaux.runSteps(x0aux, indBaux, indNaux)
 
         if np.dot(lpaux.c, xaux) > 1e-9:
             return self.ProblemStatus.UNFEASIBLE, None
-        # Provided that the auxiliary problem is non-degenerate, we must have indB as a subset of 1...n
-        # TODO: check if all elements of indB are less then n
-        # TODO: implement the case of degenerate problem
 
-        x = np.array(xaux[0: self.n])
-        indB = indBaux
-        indN = []
-        for i in range(0, self.n):
-            if not (i in indB):
-                indN.append(i)
+        (x, indB, indN) = self.phase_one_to_phase_two(xaux, indBaux)
 
         (status, x, indB, indN) = self.runSteps(x, indB, indN)
 
